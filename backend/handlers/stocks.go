@@ -27,6 +27,10 @@ func GetStockExchanges(c *gin.Context) {
 	for _, stockExchange := range stockData {
 		response[stockExchange.Code] = stockExchange.StockExchange
 	}
+	if len(response) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No stock exchanges found"})
+		return
+	}
 	c.JSON(http.StatusOK, response)
 }
 
@@ -83,5 +87,6 @@ func LoadStocksFromJSON() error {
 }
 
 func LoadStocksFromYahoo() error {
+	fmt.Println("Loading stocks from Yahoo")
 	return nil
 }
