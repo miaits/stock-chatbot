@@ -1,0 +1,97 @@
+backend:
+  name: lseg-chatbot-backend
+  image:
+    repository: miaitss/lseg-chatbot-backend
+    tag: v1.0.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  env:
+    - name: DATA_FILE
+      value: "/app/data/stock_data.json"
+
+frontend:
+  name: lseg-chatbot-frontend
+  image:
+    repository: miaitss/lseg-chatbot-frontend
+    tag: v1.0.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 3000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  env:
+    - name: VITE_BACKEND_URL
+      value: "http://localhost:8080/stocks"
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    backend:
+      host: backend.local
+      paths:
+        - path: /
+          pathType: Prefix
+    frontend:
+      host: frontend.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    enabled: false
+    secretName: lseg-chatbot-tls
+    issuerRef:
+      name: letsencrypt-prod
+      kind: ClusterIssuer
+
+stockData: |
+  [
+    {
+      "code": "LSE",
+      "stockExchange": "London Stock Exchange",
+      "topStocks": [
+        {
+          "code": "CRDA",
+          "stockName": "CRODA INTERNATIONAL PLC",
+          "price": 4807.00
+        },
+        {
+          "code": "GSK",
+          "stockName": "GSK PLC",
+          "price": 1574.80
+        },
+        {
+          "code": "ANTO",
+          "stockName": "ANTOFAGASTA PLC",
+          "price": 1746.00
+        },
+        {
+          "code": "FLTR",
+          "stockName": "FLUTTER ENTERTAINMENT PLC",
+          "price": 16340.00
+        },
+        {
+          "code": "BDEV",
+          "stockName": "BARRATT DEVELOPMENTS PLC",
+          "price": 542.60
+        }
+      ]
+    }
+  ]

@@ -65,7 +65,7 @@ func LoadStocksFromJSON() error {
 	dataFile := os.Getenv("DATA_FILE")
 	if dataFile == "" {
 		log.Println("DATA_FILE is not set")
-		return fmt.Errorf("DATA_FILE is not set")
+		dataFile = "data/stock_data.json"
 	}
 	jsonFile, err := os.Open(dataFile)
 	if err != nil {

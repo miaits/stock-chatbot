@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-demo-data
+data:
+  stock_data.json: |
+    {{ .Values.stockData | nindent 4 }} 

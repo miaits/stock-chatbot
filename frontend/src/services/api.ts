@@ -1,6 +1,7 @@
 import { Exchange, Stock } from '../types/stock';
 
-const API_BASE_URL = 'http://localhost:8080/stocks';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080/stocks';
+console.log(API_BASE_URL);
 
 class ApiError extends Error {
     constructor(public status: number, message: string) {
