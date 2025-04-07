@@ -8,6 +8,7 @@ const Chatbot: React.FC = () => {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [exchanges, setExchanges] = useState<Exchange>({});
     const [selectedExchange, setSelectedExchange] = useState<string>('');
+    const [currentStocks, setCurrentStocks] = useState<Stock[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -66,7 +67,10 @@ const Chatbot: React.FC = () => {
         setSelectedExchange(exchange);
         try {
             const stocksData = await fetchStocksByExchange(exchange);
-            if (stocksData.length === 0) {
+            const top5Stocks = stocksData.slice(0, 5);
+            setCurrentStocks(top5Stocks);
+            
+            if (top5Stocks.length === 0) {
                 setMessages(prev => [...prev, 
                     {
                         type: 'user',
@@ -76,7 +80,12 @@ const Chatbot: React.FC = () => {
                     {
                         type: 'bot',
                         content: `No stocks found for ${exchanges[exchange]}. Please try another exchange.`,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        data: [{
+                            code: 'markets',
+                            stockName: 'Back to markets',
+                            price: 0
+                        }]
                     }
                 ]);
                 return;
@@ -90,12 +99,19 @@ const Chatbot: React.FC = () => {
                 },
                 {
                     type: 'bot',
-                    content: `Here are the available stock codes on ${exchanges[exchange]}. Click on any code to see more details:`,
+                    content: `Here are the top 5 stocks on ${exchanges[exchange]}. Click on any code to see more details:`,
                     timestamp: new Date(),
-                    data: stocksData.map(stock => ({
-                        ...stock,
-                        stockName: stock.code
-                    }))
+                    data: [
+                        ...top5Stocks.map(stock => ({
+                            ...stock,
+                            stockName: stock.code
+                        })),
+                        {
+                            code: 'markets',
+                            stockName: 'Back to markets',
+                            price: 0
+                        }
+                    ]
                 }
             ]);
         } catch (error) {
@@ -108,7 +124,12 @@ const Chatbot: React.FC = () => {
                 {
                     type: 'bot',
                     content: getErrorMessage(error),
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    data: [{
+                        code: 'markets',
+                        stockName: 'Back to markets',
+                        price: 0
+                    }]
                 }
             ]);
         }
@@ -126,7 +147,19 @@ const Chatbot: React.FC = () => {
                 {
                     type: 'bot',
                     content: `${stockDetails.stockName} (${stockDetails.code}) is currently trading at £${stockDetails.price.toFixed(2)}`,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    data: [
+                        {
+                            code: 'back',
+                            stockName: 'Back to stocks list',
+                            price: 0
+                        },
+                        {
+                            code: 'markets',
+                            stockName: 'Back to markets',
+                            price: 0
+                        }
+                    ]
                 }
             ]);
         } catch (error) {
@@ -139,16 +172,71 @@ const Chatbot: React.FC = () => {
                 {
                     type: 'bot',
                     content: getErrorMessage(error),
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    data: [{
+                        code: 'markets',
+                        stockName: 'Back to markets',
+                        price: 0
+                    }]
                 }
             ]);
         }
     };
 
+    const handleBackToStocks = () => {
+        setMessages(prev => [...prev,
+            {
+                type: 'user',
+                content: 'Back to stocks list',
+                timestamp: new Date()
+            },
+            {
+                type: 'bot',
+                content: `Here are the top 5 stocks on ${exchanges[selectedExchange]}. Click on any code to see more details:`,
+                timestamp: new Date(),
+                data: [
+                    ...currentStocks.map(stock => ({
+                        ...stock,
+                        stockName: stock.code
+                    })),
+                    {
+                        code: 'markets',
+                        stockName: 'Back to markets',
+                        price: 0
+                    }
+                ]
+            }
+        ]);
+    };
+
+    const handleBackToMarkets = () => {
+        setSelectedExchange('');
+        setCurrentStocks([]);
+        const exchangeButtons = Object.entries(exchanges).map(([code, name]) => ({
+            code,
+            stockName: name,
+            price: 0
+        }));
+        
+        setMessages(prev => [...prev,
+            {
+                type: 'user',
+                content: 'Back to markets',
+                timestamp: new Date()
+            },
+            {
+                type: 'bot',
+                content: 'Here are the available exchanges:',
+                timestamp: new Date(),
+                data: exchangeButtons
+            }
+        ]);
+    };
+
     return (
         <>
             <button className="chat-button" onClick={() => setIsOpen(!isOpen)}>
-                💬
+                🤖
             </button>
             {isOpen && (
                 <div className="chat-container">
@@ -167,7 +255,11 @@ const Chatbot: React.FC = () => {
                                                 key={idx}
                                                 className="data-button"
                                                 onClick={() => {
-                                                    if (item.price === 0) {
+                                                    if (item.code === 'back') {
+                                                        handleBackToStocks();
+                                                    } else if (item.code === 'markets') {
+                                                        handleBackToMarkets();
+                                                    } else if (item.price === 0) {
                                                         handleExchangeSelect(item.code);
                                                     } else {
                                                         handleStockSelect(item);

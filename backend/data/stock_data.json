@@ -9,6 +9,16 @@
                 "price": 4807.00
             },
             {
+                "code": "CRDASS",
+                "stockName": "CRODA INTERNATIONALDAD PLC",
+                "price": 4807.00
+            },
+            {
+                "code": "CRDZA",
+                "stockName": "CRODA INTASFD ASERNATIONAL PLC",
+                "price": 4807.00
+            },                        
+            {
                 "code": "GSK",
                 "stockName": "GSK PLC",
                 "price": 1574.80
