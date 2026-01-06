@@ -2,9 +2,6 @@
 
 A web application that provides a chatbot interface for interacting with stock market data. The application consists of a Go backend and a React frontend, containerized and deployed on Kubernetes.
 
-## Live Demo
-
-The application is publicly accessible at: https://lseg-chatbot.klusterio.com/
 
 ## Project Structure
 
@@ -73,3 +70,4 @@ The services will be accessible at:
 
 
 - Enable real-time data by implementing yahoo-finance library
+
