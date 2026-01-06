@@ -15,7 +15,7 @@ A web application that provides a chatbot interface for interacting with stock m
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/miaits/lseg-chatbot.git
+git clone https://github.com/miaits/stock-chatbot.git
 cd lseg-chatbot
 ```
 
@@ -70,4 +70,5 @@ The services will be accessible at:
 
 
 - Enable real-time data by implementing yahoo-finance library
+
 
