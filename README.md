@@ -1,4 +1,4 @@
-# LSEG Chatbot
+# Stock Chatbot
 
 A web application that provides a chatbot interface for interacting with stock market data. The application consists of a Go backend and a React frontend, containerized and deployed on Kubernetes.
 
@@ -70,5 +70,6 @@ The services will be accessible at:
 - Kubernetes orchestration for production deployment
 
 ## Roadmap
+
 
 - Enable real-time data by implementing yahoo-finance library
